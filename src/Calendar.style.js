@@ -1,16 +1,13 @@
-/**
- * Created by bogdanbegovic on 8/26/16.
- */
-
 import {
     StyleSheet
 } from 'react-native';
 
 export default StyleSheet.create({
-
     //CALENDAR STYLES
     calendarContainer: {
-        overflow: 'hidden'
+        overflow: 'hidden',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     datesStrip: {
         flexDirection: 'row'
@@ -18,8 +15,6 @@ export default StyleSheet.create({
     calendarDates: {
         flex: 1,
         flexDirection: 'row',
-        // justifyContent: 'center',
-        // alignItems: 'center'
     },
     calendarHeader: {
         fontSize: 16,
@@ -35,6 +30,35 @@ export default StyleSheet.create({
         height: 20,
         resizeMode: 'contain'
     },
+    // Calendar month buttons
+    BButton: {
+      position: 'absolute',
+      left: -40,
+      top: -38,
+      width: 30,
+      height: 30,
+      padding: 5
+    },
+    BButtonImage: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 30,
+      height: 30,
+    },
+    FButton: {
+      position: 'absolute',
+      left: 64,
+      top: -12,
+      width: 30,
+      height: 30,
+      padding: 5
+    },
+    FButtonImage: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 30,
+      height: 30,
+    },
 
     //CALENDAR DAY
     dateContainer: {
@@ -49,20 +73,23 @@ export default StyleSheet.create({
         fontSize: 10,
         textAlign: 'center'
     },
-    weekendDateName: {
-        fontSize: 10,
-        color: '#A7A7A7',
-        textAlign: 'center'
-    },
     dateNumber: {
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center'
     },
+    weekendDateName: {
+        fontSize: 10,
+        color: '#A9A9A9',
+        textAlign: 'center'
+    },
     weekendDateNumber: {
         fontSize: 18,
-        color: '#A7A7A7',
+        color: '#A9A9A9',
         fontWeight: 'bold',
         textAlign: 'center'
-    }
+    },
+    disabledStyle: {
+        color: '#d3d3d3'
+    },
 });

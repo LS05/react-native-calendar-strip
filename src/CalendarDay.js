@@ -67,11 +67,13 @@ export default class CalendarDay extends Component {
             this.animate(1);
         }
         setTimeout(() => {
-            this.refs.mainButton.measure((fx, fy, width, height, px, py) => {
-                if (this.isToday) {
-                  this.props.activeDayCoord(px);
-                }
-            });
+          this.refs.mainButton.measure((fx, fy, width, height, px, py) => {
+            if (this.isToday) {
+              this.props.activeDayCoord(px);
+            } else if (this.props.selected){
+                this.props.activeDayCoord(0);
+              }
+          });
         }, 0);
     }
 

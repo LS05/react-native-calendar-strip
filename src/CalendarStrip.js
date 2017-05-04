@@ -14,11 +14,16 @@ import CalendarDay from './CalendarDay';
 import moment from 'moment';
 import styles from './Calendar.style.js';
 
-//Just a shallow array of 7 elements
-const arr = [];
-for (let i = 0; i < moment().daysInMonth(); i++) {
-    arr.push(i);
+let arr = [];
+let arrInit = function(date) {
+  arr = [];
+  for (let i = 0; i < date.daysInMonth(); i++) {
+      arr.push(i);
+  }
+  return arr;
 }
+arrInit(moment());
+
 class F_Button extends Component {
   render() {
     return (
@@ -120,27 +125,27 @@ export default class CalendarStrip extends Component {
         };
 
         this.onTapF = () => {
-          console.log('Current Month: ' + this.state.month);
           let incMonth = this.state.month += 1;
           let forwaredDate = moment().month(incMonth).startOf('month');
           this.setDay(forwaredDate);
           this.setState({
-            month: forwaredDate.month()
+            month: forwaredDate.month(),
+            startingDate: forwaredDate,
+            selectedDate: forwaredDate
           }, function(){
-            console.log('Next Month: ' + this.state.month);
             this.onDateSelected(forwaredDate);
           });
         }
 
         this.onTapB = () => {
-          console.log('Current Month: ' + this.state.month);
           let incMonth = this.state.month -= 1;
           let backwardedDate = moment().month(incMonth).startOf('month');
           this.setDay(backwardedDate);
           this.setState({
-            month: backwardedDate.month()
+            month: backwardedDate.month(),
+            startingDate: backwardedDate,
+            selectedDate: backwardedDate
           }, function(){
-            console.log('Prev Month: ' + this.state.month);
             this.onDateSelected(backwardedDate);
           });
         }
@@ -150,8 +155,6 @@ export default class CalendarStrip extends Component {
         this.componentDidMount = this.componentDidMount.bind(this);
         this.componentWillUpdate = this.componentWillUpdate.bind(this);
         this.getDatesForMonth = this.getDatesForMonth.bind(this);
-        this.getPreviousWeek = this.getPreviousWeek.bind(this);
-        this.getNextWeek = this.getNextWeek.bind(this);
         this.onDateSelected = this.onDateSelected.bind(this);
         this.isDateSelected = this.isDateSelected.bind(this);
         this.formatCalendarHeader = this.formatCalendarHeader.bind(this);
@@ -201,24 +204,6 @@ export default class CalendarStrip extends Component {
         return momentInstance;
     }
 
-    //Set startingDate to the previous week
-    getPreviousWeek() {
-        const previousWeekStartDate = this.state.startingDate.subtract(1, 'w');
-        this.setState({startingDate: previousWeekStartDate});
-        if (this.props.onWeekChanged) {
-            this.props.onWeekChanged(previousWeekStartDate.clone().startOf(this.props.useIsoWeekday ? 'isoweek' : 'week'));
-        }
-    }
-
-    //Set startingDate to the next week
-    getNextWeek() {
-        const nextWeekStartDate = this.state.startingDate.add(1, 'w');
-        this.setState({startingDate: nextWeekStartDate});
-        if (this.props.onWeekChanged) {
-            this.props.onWeekChanged(nextWeekStartDate.clone().startOf(this.props.useIsoWeekday ? 'isoweek' : 'week'));
-        }
-    }
-
     //Get dates for the week based on the startingDate
     //Using isoWeekday so that it will start from Monday
     getDatesForMonth() {
@@ -226,6 +211,7 @@ export default class CalendarStrip extends Component {
         let dates = [];
         let year = this.state.startingDate.year();
         let month = this.state.startingDate.month();
+        arrInit(this.state.startingDate);
 
         arr.forEach((item) => {
             let date = moment([year, month, item + 1]);
@@ -237,7 +223,6 @@ export default class CalendarStrip extends Component {
 
     //Handling press on date/selecting date
     onDateSelected(date) {
-        console.log(date);
         this.setState({selectedDate: date});
         if (this.props.onDateSelected) {
             this.props.onDateSelected(date);
@@ -314,6 +299,7 @@ export default class CalendarStrip extends Component {
     }
 
     scrollToActiveDay(activeX){
+      console.log('scrollToActiveDay');
       setTimeout(() => {
         this.refs.datesScrollView.scrollTo({x: activeX - 10}, true);
       }, 1000);

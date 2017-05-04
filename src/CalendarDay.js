@@ -53,6 +53,12 @@ export default class CalendarDay extends Component {
         let now = moment().format('YYYY-MM-DD');
         this.isAfter = moment(date).isAfter(now);
         this.isToday = moment(now).isSame(date, 'day');
+        let dateDay = moment(date).day();
+        this.isWeekend = false;
+        if (dateDay === 0 || dateDay === 6) {
+          this.isWeekend = true;
+        }
+        this.isDisabled = this.isAfter || this.isWeekend;
     }
 
     //When component mounts, if it is seleced run animation for animation show
@@ -124,13 +130,17 @@ export default class CalendarDay extends Component {
           dateNameStyle = [styles.dateName, this.props.highlightDateNameStyle];
           dateNumberStyle = [styles.dateNumber, this.props.highlightDateNumberStyle];
         }
-        console.log(this.isAfter);
+
+        let disabledStyle;
+        if (this.isAfter) {
+          disabledStyle = styles.disabledStyle
+        }
         return (
           <TouchableOpacity ref='mainButton' onPress={this.props.onDateSelected.bind(this, this.props.date)}
-            disabled={this.isAfter}>
+            disabled={this.isDisabled}>
             <Animated.View style={[styles.dateContainer, animObject]}>
-              <Text style={dateNameStyle}>{this.props.date.format('ddd').toUpperCase()}</Text>
-              <Text style={dateNumberStyle}>{this.props.date.date()}</Text>
+              <Text style={[dateNameStyle, disabledStyle]}>{this.props.date.format('ddd').toUpperCase()}</Text>
+              <Text style={[dateNumberStyle, disabledStyle]}>{this.props.date.date()}</Text>
             </Animated.View>
           </TouchableOpacity>
         );

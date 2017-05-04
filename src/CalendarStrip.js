@@ -1,15 +1,13 @@
-/**
- * Created by bogdanbegovic on 8/20/16.
- */
-
 import React, {Component} from 'react';
 import {
     Text,
     View,
     Image,
+    Button,
     Animated,
+    Alert,
     Easing,
-    TouchableOpacity,
+    TouchableHighlight,
     ScrollView
 } from 'react-native';
 import CalendarDay from './CalendarDay';
@@ -21,6 +19,36 @@ const arr = [];
 for (let i = 0; i < moment().daysInMonth(); i++) {
     arr.push(i);
 }
+class F_Button extends Component {
+  render() {
+    return (
+      <TouchableHighlight
+        underlayColor={'white'}
+        activeOpacity={0.7}
+        onPress={() => { this.props.onPress() }}>
+        <View style={styles.FButton}>
+          <Image style={styles.FButtonImage} source={require('./img/arrow-right.png')}/>
+        </View>
+      </TouchableHighlight>
+    );
+  }
+}
+
+class B_Button extends Component {
+  render() {
+    return (
+      <TouchableHighlight
+        underlayColor={'white'}
+        activeOpacity={0.7}
+        onPress={() => { this.props.onPress() }}>
+        <View style={styles.BButton}>
+          <Image style={styles.BButtonImage} source={require('./img/arrow-left.png')}/>
+        </View>
+      </TouchableHighlight>
+    );
+  }
+}
+
 /*
  * Class CalendarStrip that is representing the whole calendar strip and contains CalendarDay elements
  *
@@ -87,8 +115,35 @@ export default class CalendarStrip extends Component {
 
         this.state = {
             startingDate,
-            selectedDate
+            selectedDate,
+            month: moment().month()
         };
+
+        this.onTapF = () => {
+          console.log('Current Month: ' + this.state.month);
+          let incMonth = this.state.month += 1;
+          let forwaredDate = moment().month(incMonth).startOf('month');
+          this.setDay(forwaredDate);
+          this.setState({
+            month: forwaredDate.month()
+          }, function(){
+            console.log('Next Month: ' + this.state.month);
+            this.onDateSelected(forwaredDate);
+          });
+        }
+
+        this.onTapB = () => {
+          console.log('Current Month: ' + this.state.month);
+          let incMonth = this.state.month -= 1;
+          let backwardedDate = moment().month(incMonth).startOf('month');
+          this.setDay(backwardedDate);
+          this.setState({
+            month: backwardedDate.month()
+          }, function(){
+            console.log('Prev Month: ' + this.state.month);
+            this.onDateSelected(backwardedDate);
+          });
+        }
 
         this.resetAnimation();
 
@@ -103,6 +158,15 @@ export default class CalendarStrip extends Component {
         this.animate = this.animate.bind(this);
         this.resetAnimation = this.resetAnimation.bind(this);
         this.scrollToActiveDay = this.scrollToActiveDay.bind(this);
+        this.setDay = this.setDay.bind(this);
+    }
+
+    setDay(date) {
+      if (date.day() === 0 ){
+        date.add(1, 'days');
+      } else if (date.day() === 6) {
+        date.add(2, 'days');
+      }
     }
 
     //Animate showing of CalendarDay elements
@@ -173,6 +237,7 @@ export default class CalendarStrip extends Component {
 
     //Handling press on date/selecting date
     onDateSelected(date) {
+        console.log(date);
         this.setState({selectedDate: date});
         if (this.props.onDateSelected) {
             this.props.onDateSelected(date);
@@ -255,6 +320,7 @@ export default class CalendarStrip extends Component {
     }
 
     render() {
+      console.log('render');
       let opacityAnim = 1;
       let datesRender = this.getDatesForMonth().map((date, index) => {
           if (this.props.calendarAnimation) {
@@ -286,7 +352,11 @@ export default class CalendarStrip extends Component {
       });
       return (
           <View style={[styles.calendarContainer, {backgroundColor: this.props.calendarColor}, this.props.style]}>
-              {<Text style={[styles.calendarHeader, this.props.calendarHeaderStyle]}>{this.formatCalendarHeader()}</Text>}
+              <View>
+                <F_Button onPress={() => { this.onTapF() }} />
+                {<Text style={[styles.calendarHeader, this.props.calendarHeaderStyle]}>{this.formatCalendarHeader()}</Text>}
+                <B_Button onPress={() => { this.onTapB() }} />
+              </View>
               <ScrollView pagingEnabled={this.props.pagingEnabled}
                           horizontal={true}
                           showsHorizontalScrollIndicator={this.props.showsHorizontalScrollIndicator}

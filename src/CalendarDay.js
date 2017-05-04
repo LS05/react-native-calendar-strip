@@ -124,7 +124,6 @@ export default class CalendarDay extends Component {
           dateNameStyle = [styles.dateName, this.props.highlightDateNameStyle];
           dateNumberStyle = [styles.dateNumber, this.props.highlightDateNumberStyle];
         }
-        console.log(this.isAfter);
         return (
           <TouchableOpacity ref='mainButton' onPress={this.props.onDateSelected.bind(this, this.props.date)}
             disabled={this.isAfter}>

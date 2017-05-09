@@ -84,9 +84,13 @@ export default class CalendarDay extends Component {
         if(this.isToday()){
           return true;
         } else {
-          date.add(1, 'day');
-          if(moment().isSame(date, 'day')){
-            return true;
+          if(date.day() !== 0){
+            date.add(1, 'day');
+            if(moment().isSame(date, 'day')){
+              return true;
+            }
+          } else {
+            return false;
           }
         }
       }
@@ -95,7 +99,7 @@ export default class CalendarDay extends Component {
     isCurrentMonth(){
       let date = moment(this.props.date);
       let now = moment();
-      return date.month() !== now.month();
+      return date.month() === now.month();
     }
 
     getDistance() {

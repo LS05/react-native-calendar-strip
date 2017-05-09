@@ -33,7 +33,7 @@ export default class CalendarDay extends Component {
         styleWeekend: React.PropTypes.bool,
 
         selection: React.PropTypes.string,
-        selectionAnimation: React.PropTypes.object
+        selectionAnimation: React.PropTypes.object,
     };
 
     static defaultProps = {
@@ -49,32 +49,69 @@ export default class CalendarDay extends Component {
     constructor(props) {
         super(props);
         this.animValue = new Animated.Value(0);
-        let date = this.props.date.format('YYYY-MM-DD');
-        let now = moment().format('YYYY-MM-DD');
-        this.isAfter = moment(date).isAfter(now);
-        this.isToday = moment(now).isSame(date, 'day');
-        let dateDay = moment(date).day();
-        this.isWeekend = false;
-        if (dateDay === 0 || dateDay === 6) {
-          this.isWeekend = true;
+
+        this.isToday = this.isToday.bind(this);
+        this.isAfter = this.isAfter.bind(this);
+        this.isWeekend = this.isWeekend.bind(this);
+        this.isDisabled = this.isAfter() || this.isWeekend();
+        this.distance = -1;
+    }
+
+    isWeekend(){
+      let dateDay = moment(this.props.date).day();
+      if (dateDay === 0 || dateDay === 6) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    isToday(){
+      let date = this.props.date.format('YYYY-MM-DD');
+      let now = moment().format('YYYY-MM-DD');
+      return moment(now).isSame(date, 'day');
+    }
+
+    isAfter(){
+      let date = this.props.date.format('YYYY-MM-DD');
+      let now = moment().format('YYYY-MM-DD');
+      return moment(date).isAfter(now);
+    }
+
+    isDayInActiveWeek(){
+      let date = moment(this.props.date);
+      for(let i = 1; i < 7; i++){
+        if(this.isToday()){
+          return true;
+        } else {
+          date.add(1, 'day');
+          if(moment().isSame(date, 'day')){
+            return true;
+          }
         }
-        this.isDisabled = this.isAfter || this.isWeekend;
+      }
+    }
+
+    isCurrentMonth(){
+      let date = moment(this.props.date);
+      let now = moment();
+      return date.month() !== now.month();
+    }
+
+    getDistance() {
+      return this.distance;
     }
 
     //When component mounts, if it is seleced run animation for animation show
     componentDidMount() {
-        if (this.props.selected) {
-            this.animate(1);
-        }
-        setTimeout(() => {
-          this.refs.mainButton.measure((fx, fy, width, height, px, py) => {
-            if (this.isToday) {
-              this.props.activeDayCoord(px);
-            } else if (this.props.selected){
-                this.props.activeDayCoord(0);
-              }
-          });
-        }, 0);
+      if (this.props.selected) {
+          this.animate(1);
+      }
+      setTimeout(() => {
+        this.refs.mainButton.measure((fx, fy, width, height, px, py) => {
+          this.distance = px;
+        });
+      }, 0);
     }
 
     //When component receives the props, if it is selected use showing animation
@@ -134,9 +171,10 @@ export default class CalendarDay extends Component {
         }
 
         let disabledStyle;
-        if (this.isAfter) {
+        if (this.isDisabled) {
           disabledStyle = styles.disabledStyle
         }
+
         return (
           <TouchableOpacity ref='mainButton' onPress={this.props.onDateSelected.bind(this, this.props.date)}
             disabled={this.isDisabled}>

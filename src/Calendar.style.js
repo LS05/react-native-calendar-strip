@@ -18,7 +18,6 @@ export default StyleSheet.create({
     },
     calendarHeader: {
         fontSize: 16,
-        textAlign: 'center',
         fontWeight: 'bold'
     },
     iconContainer: {
@@ -31,27 +30,11 @@ export default StyleSheet.create({
         resizeMode: 'contain'
     },
     // Calendar month buttons
-    BButton: {
-      position: 'absolute',
-      left: -40,
-      top: -38,
-      width: 30,
-      height: 30,
-      padding: 5
-    },
     BButtonImage: {
       alignItems: 'center',
       justifyContent: 'center',
       width: 30,
       height: 30,
-    },
-    FButton: {
-      position: 'absolute',
-      left: 64,
-      top: -12,
-      width: 30,
-      height: 30,
-      padding: 5
     },
     FButtonImage: {
       alignItems: 'center',
